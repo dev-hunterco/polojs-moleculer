@@ -1,6 +1,6 @@
 {
   "name": "polo-moleculer",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Moleculer Mixin for Queued communication between services",
   "main": "src/index.js",
   "scripts": {
