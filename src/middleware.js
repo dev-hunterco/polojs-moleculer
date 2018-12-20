@@ -68,10 +68,6 @@ module.exports = {
 
         // Create actions based on messages definitions
         var newActions = createActions(schema)
-
-        // Saves created actions to rebind them after the service is created
-        // schema.__poloActions = newActions
-
         var current = schema.actions || {}
         var finalActions = Object.assign(current, newActions)
         schema.actions = finalActions

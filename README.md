@@ -2,9 +2,7 @@
 
 The Polo-Moleculer module is a [Moleculer](https://github.com/moleculerjs/moleculer) mixin to enable services to exchange asyncronous integration messages, in a request/response fashion. Currently Polo supports AWS SQS but other transports may be added in the future.
 
-# Getting Started
-
-## Configuration
+# Configuration
 Before using Polo-Moleculer you must have a configuration object or file with some information like credentials and sqs options. More details about this configuration can be found in [Polo Messaging in GitHub](https://github.com/dev-hunterco/polo-nodejs).
 
 ```json
@@ -27,9 +25,9 @@ Before using Polo-Moleculer you must have a configuration object or file with so
 }
 ```
 
-## Broker Middleware
+# Broker Middleware
 
-PoloMoleculer will inject actions to your service based on the messages defined (see examples bellow). To enable this injection you have to set a middleware in your broker.
+Polo-Moleculer will inject actions to your service based on the messages defined (see examples bellow). To enable this injection you have to set a middleware in your broker.
 
 ```javascript
 const { PoloMoleculerMiddleware } = require('polo-moleculer')
@@ -39,7 +37,7 @@ var broker = new ServiceBroker({
 })
 ```
 
-## Service Provider
+# Service Provider
 
 The following example creates a service that will receive _greetings_ requests. Notice that `onRequest` will be called when a new _greetings_ message is received.
 
@@ -67,11 +65,11 @@ module.exports = {
 }
 ```
 
-## Service Consumer
+# Service Consumer
 
 To consume a service you'll need another service (likely in a remote app) that will send a _greetings_ message request and receive its response.
 
-PoloMoleculer will automatically create a `send<Message>Request` action that can be used to send a request to server (see [Using Service Consumer](#using-service-consumer)).
+Polo-Moleculer will automatically create a `send<Message>Request` action that can be used to send a request to server (see [Using Service Consumer](#using-service-consumer)).
 )
 
 ```javascript
@@ -101,7 +99,7 @@ module.exports = {
 }
 ```
 
-## Using Service 
+# Using Service Consumer
 
 Once you have both services created, you can send messages to the server, through the client, like this:
 
@@ -111,9 +109,10 @@ broker.call('sample-client.sendGreetingsRequest', {
     name: 'Moleculer'
   }
 })
+  .then(receipt => console.log('Message sent !'))
 ```
 
-## Receiving messages
+# Receiving messages
 
 All Polo-Moleculer services have a `receiveMessages` action that will load messages from the queue and start processing it (that is, call on<Message>Request or on<Message>Response actions). The number of messages read or waiting period can be set in the [Configurations](#configuration).
 
@@ -125,4 +124,17 @@ broker.call('sample-server.receiveMessages')
 You can also configure service to periodically read messages using a cron-like expression in settings:
 
 ```javascript
+module.exports = {
+  name: 'sample-server',
+  mixins: [PoloMoleculerMixin],
+  settings: {
+    polo: Object.assign({app: 'Server'}, sampleConfig)
+    readScheduling: '*/15 * * * * *', // checks queue every 15s
+    autoRead = true // Automatically starts scheduling when service is created
+  },
+  ...
+
 ```
+
+You can set `autoRead` to automatically start scheduler once service is started.
+You can also start/stop scheduler by calling actions `startSchedule` and `stopSchedule`, respectively.

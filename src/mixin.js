@@ -1,4 +1,5 @@
 const PoloMessaging = require('hunterco-polo');
+const schedule = require('node-schedule')
 
 module.exports = {
   __polo_moleculer_flag: true,
@@ -17,11 +18,11 @@ module.exports = {
     this.logger.info('Loading Polo Message for app ' + this.settings.polo.app)
     this.messagingAPI = new PoloMessaging(this.settings.polo);
 
-    // Rebinds actions created to *this* 
-    // this.schema.__poloActions.forEach(m => m.bind(this))
+    this.readMsgJob = null
+    this.readingInProgress = false
   },
 
-  started() {
+  started(ctx) {
     return this.messagingAPI.initializeSQS()
       .then(_ => {
         this.logger.info('Queue initialized');
@@ -37,13 +38,58 @@ module.exports = {
           var targetAction = `on${this.changeFirstChar(m, c => c.toUpperCase())}Response`
           this.logger.info(targetAction, 'configured to output message', m)
         })
-      });
+      })
+      // Check if should start scheduler
+      .then(_ => {
+        if (this.settings.readScheduling && this.settings.autoRead) {
+          this.logger.info(`Auto Reading schedule: ${this.settings.readScheduling}. Starting Job`)
+          this.actions.startSchedule()
+        }
+      })
   },
 
   actions: {
     receiveMessages (ctx) {
-      this.logger.info('Reading incoming messages...')
-      return this.messagingAPI.readMessages()
+      if(this.readingInProgress) {
+        this.logger.info('Still reading messages, aborting new loop')
+      } else {
+        this.logger.debug('Reading incoming messages...')
+        this.readingInProgress = true
+        return this.messagingAPI.readMessages()
+          .then(qtd => {
+            this.readingInProgress = false
+            return qtd
+          })
+      }
+    },
+
+    startSchedule (ctx) {
+      var scheduleExpr = (ctx||{params: {}}).params.scheduling || this.settings.readScheduling
+      if(!scheduleExpr) {
+        this.logger.warn('No Schedulling expression was set. Job will not be started.')
+        return
+      }
+
+      // Stops job if is already set
+      if(this.readMsgJob) {
+        this.readMsgJob.cancel()
+      }
+
+      var _this = this
+      this.readMsgJob = schedule.scheduleJob(scheduleExpr, function() {
+        _this.broker.call(`${_this.name}.receiveMessages`)
+          .then(qtd => {
+            if(qtd > 0) {
+              _this.logger.info(qtd, 'messages read')
+            }
+          })
+      });
+    },
+
+    stopSchedule (ctx) {
+      if(this.readMsgJob) {
+        this.readMsgJob.cancel()
+      }
     }
   },
 

@@ -17,6 +17,7 @@ module.exports = {
       target: 'Server',
 
       onResponse (ctx) {
+        this.logger.info('Received server greetings:', ctx.params.body.answer)
         this.receivedMessages.push(ctx.params)
         return ctx.params.done()
       }
