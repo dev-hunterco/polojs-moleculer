@@ -52,9 +52,31 @@ function createOutgoingActions(schema, name, definition) {
     return targetFnc ( ctx )
   }
 
+  var msgSchema = definition.schema
+
   var actions = {}
-  actions[`send${pascalCaseName}Request`] = sendRequest
-  actions[`on${pascalCaseName}Response`] = onResponse
+  actions[`send${pascalCaseName}Request`] = {
+    params: {
+      body: {
+        type: "object",
+        optional: true,
+        props: msgSchema 
+      },
+      payload: {
+        type: "any",
+        optional: true
+      },
+      conversationId: {
+        type: "string",
+        optional: true
+      }
+    },
+    handler: sendRequest
+  }
+
+  actions[`on${pascalCaseName}Response`] = {
+    handler: onResponse
+  }
 
   return actions
 }

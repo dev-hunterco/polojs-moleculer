@@ -15,6 +15,9 @@ module.exports = {
   messages: {
     greetings: {
       target: 'Server',
+      schema: {
+        name: "string"
+      },
 
       onResponse (ctx) {
         this.logger.info('Received server greetings:', ctx.params.body.answer)
