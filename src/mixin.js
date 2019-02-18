@@ -1,5 +1,6 @@
 const PoloMessaging = require('hunterco-polo');
 const schedule = require('node-schedule')
+const { MoleculerError } = require("moleculer").Errors;
 
 module.exports = {
   __polo_moleculer_flag: true,

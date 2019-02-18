@@ -1,6 +1,6 @@
 {
   "name": "polo-moleculer",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Moleculer Mixin for Queued communication between services",
   "main": "src/index.js",
   "scripts": {
@@ -8,13 +8,13 @@
   },
   "dependencies": {
     "hunterco-polo": "^0.1.3",
-    "moleculer": "^0.13.5",
-    "node-schedule": "^1.3.1"
+    "moleculer": "^0.13.6",
+    "node-schedule": "^1.3.2"
   },
   "devDependencies": {
-    "mocha": "^5.2.0",
+    "mocha": "^6.0.0",
     "should": "^13.2.3",
-    "terminal-kit": "^1.26.8"
+    "terminal-kit": "^1.26.11"
   },
   "author": "HunterCo",
   "license": "Apache-2.0",
