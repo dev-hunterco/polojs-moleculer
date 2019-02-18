@@ -49,6 +49,10 @@ module.exports = {
       })
   },
 
+  stopped(ctx) {
+    this.stopSchedule()
+  },
+
   actions: {
     receiveMessages (ctx) {
       if(this.readingInProgress) {
@@ -88,9 +92,7 @@ module.exports = {
     },
 
     stopSchedule (ctx) {
-      if(this.readMsgJob) {
-        this.readMsgJob.cancel()
-      }
+      this.stopSchedule()
     }
   },
 
@@ -164,6 +166,12 @@ module.exports = {
 
       } else {
 
+      }
+    },
+
+    stopSchedule() {
+      if(this.readMsgJob) {
+        this.readMsgJob.cancel()
       }
     }
   }
