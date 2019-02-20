@@ -44,7 +44,7 @@ function createOutgoingActions(schema, name, definition) {
 
   var sendRequest = function(ctx) {
     var targetApp = definition.target || schema.settings.polo.app
-    return this.sendRequest(targetApp, 'greetings', ctx.params)
+    return this.sendRequest(targetApp, name, ctx.params)
   }
 
   var onResponse = function (ctx) {
