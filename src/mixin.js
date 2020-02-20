@@ -69,7 +69,8 @@ module.exports = {
     },
 
     startSchedule (ctx) {
-      var scheduleExpr = (ctx||{params: {}}).params.scheduling || this.settings.readScheduling
+      const params = (ctx||{params: {}}).params || {}
+      const scheduleExpr = params.scheduling || this.settings.readScheduling
       if(!scheduleExpr) {
         this.logger.warn('No Schedulling expression was set. Job will not be started.')
         return
