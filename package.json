@@ -14,7 +14,7 @@
   "devDependencies": {
     "mocha": "^7.0.1",
     "should": "^13.2.3",
-    "terminal-kit": "^1.33.15"
+    "terminal-kit": "^2.1.8"
   },
   "author": "HunterCo",
   "license": "Apache-2.0",
